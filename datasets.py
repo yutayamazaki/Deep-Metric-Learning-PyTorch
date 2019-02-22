@@ -28,14 +28,14 @@ def load_filter_dataset(dataset):
     cat_counter = 0
     for train in dataset:
         X, y = train[0], train[1]
-        if y == 5: # dog
+        if y == 0: # dog
             images.append(X)
-            labels.append(y)
-        elif y == 3: # cat
+            labels.append(0)
+        elif y == 1: # cat
             if cat_counter == 500:
                 continue
             images.append(X)
-            labels.append(y)
+            labels.append(1)
             cat_counter += 1
     return torch.stack(images), torch.Tensor(labels)
 

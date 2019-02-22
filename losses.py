@@ -11,58 +11,25 @@ class TripletLoss(nn.Module):
         super(TripletLoss, self).__init__()
         self.margin = margin
 
-    def forward(self, anchor, t, positive, negative):
+    def forward(self, anchor, positive, negative):
         dist = torch.sum(
             torch.pow((anchor - positive), 2) - torch.pow((anchor - negative), 2),
             dim=1) + self.margin
-        dist = F.relu(dist)
-        loss = torch.mean(dist)
-        y_0 = anchor[t==0]
-        if len(y_0) > 0:
-            loss += torch.mean(y_0**2)
-        return loss
-
-
-class L2SoftmaxLoss(nn.Module):
-    def __init__(self, fc_layers):
-        super(L2SoftmaxLoss, self).__init__()
-        self.ce_loss = nn.CrossEntropyLoss()
-        self.fc_layers = fc_layers
-
-    def forward(self, labels, anc_metric, pos_metric, neg_metric):
-        anc_classes = self.fc_layers(F.normalize(anc_metric))
-        pos_classes = self.fc_layers(F.normalize(pos_metric))
-        neg_classes = self.fc_layers(F.normalize(neg_metric))
-        
-        ce_loss = nn.CrossEntropyLoss()
-
-        loss = None
-        for classes in [anc_classes, pos_classes, neg_classes]:
-            if loss is None:
-                loss = ce_loss(classes, labels)
-            else:
-                loss += ce_loss(classes, labels)
-
-        return loss
+        return F.relu(dist).mean()
 
 
 class TripletAngularLoss(nn.Module):
-    # Angular Loss for Triplet Sampling
-    def __init__(self, alpha=45, in_degree=True, size_average=False):
+    def __init__(self, alpha=45, in_degree=True):
         # y=dnn(x), must be L2 Normalized.
         super(TripletAngularLoss, self).__init__()
         if in_degree:
             alpha = np.deg2rad(alpha)
         self.tan_alpha = np.tan(alpha) ** 2
-        self.size_average = size_average
 
     def forward(self, a, p, n):
         c = (a + p) / 2
         loss = F.relu(F.normalize(a - p).pow(2) - 4 * self.tan_alpha * F.normalize(n - c).pow(2))
-        if self.size_average:
-            return loss.mean()
-        else:
-            return loss.sum()
+        return loss.sum()
 
 
 class FocalLoss(nn.Module):

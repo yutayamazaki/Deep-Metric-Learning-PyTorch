@@ -7,7 +7,7 @@ from params import args
 
 
 class TripletResNet(nn.Module):
-    def __init__(self, metric_dim, n_classes):
+    def __init__(self, metric_dim):
         super(TripletResNet, self).__init__()
         resnet = torchvision.models.__dict__['resnet18'](pretrained=True)
         for params in resnet.parameters():
@@ -24,12 +24,10 @@ class TripletResNet(nn.Module):
             resnet.layer4,
             resnet.avgpool,
         )
-        self.fc1 = nn.Linear(resnet.fc.in_features, metric_dim)
-        self.fc2 = nn.Linear(metric_dim, n_classes)
+        self.fc = nn.Linear(resnet.fc.in_features, metric_dim)
 
     def forward(self, x):
         x = self.model(x)
         x = x.view(x.size(0), -1)
-        metric = F.normalize(self.fc1(x))
-        classes = F.softmax(self.fc2(metric), dim=1)
-        return metric, classes
+        metric = self.fc(x)
+        return metric

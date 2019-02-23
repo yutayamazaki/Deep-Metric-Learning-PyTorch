@@ -3,6 +3,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--train_json', type=str, default='./configs/train2.json')
+parser.add_argument('--test_json', type=str, default='./configs/test2.json')
 parser.add_argument('--weight_dir', type=str, default='./weights/')
 parser.add_argument('--experiment_name', type=str, default='triplet')
 

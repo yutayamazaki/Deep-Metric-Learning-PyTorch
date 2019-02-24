@@ -79,9 +79,9 @@ if __name__ == '__main__':
 
         print(f'EPOCH: [{epoch}/{args.n_epochs}], train_loss: {train_loss:.3f}, valid_loss: {valid_loss:.3f}')
 
-        if valid_loss < best_loss:
-            weights_name = args.weight_dir + args.experiment_name + f'_{valid_loss:.5f}' + '.pth'
-            best_loss = valid_loss
-            best_param = model.state_dict()
-            torch.save(best_param, weights_name)
-            print(f'save wieghts to {weights_name}')
+        #if valid_loss < best_loss:
+        weights_name = args.weight_dir + args.experiment_name + f'_{valid_loss:.5f}' + '.pth'
+        best_loss = valid_loss
+        best_param = model.state_dict()
+        torch.save(best_param, weights_name)
+        print(f'save wieghts to {weights_name}')

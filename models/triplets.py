@@ -29,5 +29,6 @@ class TripletResNet(nn.Module):
     def forward(self, x):
         x = self.model(x)
         x = x.view(x.size(0), -1)
-        metric = self.fc(x)
+        # metric = self.fc(x)
+        metric = F.normalize(self.fc(x))
         return metric

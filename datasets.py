@@ -43,20 +43,19 @@ def load_images(image_fname_list, transform):
 
 
 def load_datasets(train_json, test_json, transform):
-    fnames = load_fname(train_json)
-    test_fnames = load_fname(test_json)
+    train_fnames = load_fname(train_json)
+    fnames = load_fname(test_json)
 
-    size = int(len(fnames) * 0.3)
-    valid_fnames = np.random.choice(fnames, size)
-    train_fnames = []
+    valid_size = int(len(fnames) * 0.3)
+    valid_fnames = np.random.choice(fnames, valid_size)
+    test_fnames = []
     for fname in fnames:
         if fname not in valid_fnames:
-            train_fnames.append(fname)
+            test_fnames.append(fname)
 
     X_train, y_train = load_images(train_fnames, transform)
     X_valid, y_valid = load_images(valid_fnames, transform)
     X_test, y_test = load_images(test_fnames, transform)
-    # X_train, X_valid, y_train, y_valid = train_test_split(X, y, shuffle=True, random_state=27)
 
     train_dataset = TripletSampler(X_train, y_train)
     valid_dataset = TripletSampler(X_valid, y_valid)

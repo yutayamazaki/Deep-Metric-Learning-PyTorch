@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
+"""
 class TripletLoss(nn.Module):
     def __init__(self, margin=0.2):
         super(TripletLoss, self).__init__()
@@ -16,6 +17,18 @@ class TripletLoss(nn.Module):
             torch.pow((anchor - positive), 2) - torch.pow((anchor - negative), 2),
             dim=1) + self.margin
         return F.relu(dist).mean()
+"""
+
+
+class TripletLoss(nn.Module):
+    def __init__(self, margin=0.2):
+        super(TripletLoss, self).__init__()
+        self.margin = margin
+
+    def forward(self, a, p, n):
+        loss = (a - p).pow(2).sum(1) - (a - n).pow(2).sum(1) + self.margin
+        return F.relu(loss).mean()
+
 
 
 class TripletAngularLoss(nn.Module):

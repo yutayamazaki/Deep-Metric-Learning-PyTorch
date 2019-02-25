@@ -6,9 +6,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--train_json', type=str, default='./configs/train2.json')
 parser.add_argument('--test_json', type=str, default='./configs/test2.json')
 parser.add_argument('--weight_dir', type=str, default='./weights/')
-parser.add_argument('--experiment_name', type=str, default='triplet')
+parser.add_argument('--experiment_name', type=str, default='angular')
 
-parser.add_argument('--batch_size', type=int, default=32)
+parser.add_argument('--batch_size', type=int, default=64)
 parser.add_argument('--n_epochs', type=int, default=30)
 
 parser.add_argument('--model_name', type=str, default='resnet18')

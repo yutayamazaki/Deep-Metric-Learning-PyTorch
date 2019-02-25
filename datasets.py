@@ -64,6 +64,12 @@ def load_datasets(train_json, test_json, transform):
     return train_dataset, valid_dataset, test_dataset
 
 
+def load_test(test_json, transform):
+    test_fnames = load_fname(test_json)
+    X_test, y_test = load_images(test_fnames, transform)
+    test_dataset = TripletSampler(X_test, y_test)
+    return test_dataset
+
 
 class TripletSampler(Dataset):
     def __init__(self, inputs, targets):
@@ -80,4 +86,4 @@ class TripletSampler(Dataset):
         xn_idx = np.random.choice(np.where(self.targets != t)[0])
         xp = self.inputs[xp_idx]
         xn = self.inputs[xn_idx]
-        return x, xp, xn
+        return x, xp, xn, t

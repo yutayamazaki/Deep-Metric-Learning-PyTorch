@@ -26,7 +26,7 @@ def calculate_loss(model, data_loader, optimizer=None):
         training = True
 
     epoch_loss = 0
-    for i, (anchors, positives, negatives) in enumerate(data_loader):
+    for i, (anchors, positives, negatives, _) in enumerate(data_loader):
         anchors = anchors.to(device)
         positives = positives.to(device)
         negatives = negatives.to(device)
@@ -65,8 +65,8 @@ if __name__ == '__main__':
 
     model = TripletResNet(args.output_dim)
     model = model.to(device)
-    # criterion = TripletAngularLoss()
-    criterion = TripletLoss()
+    criterion = TripletAngularLoss()
+    # criterion = TripletLoss()
     optimizer = torch.optim.SGD(model.parameters(),
                                 lr=args.lr,
                                 momentum=args.momentum,
@@ -77,9 +77,9 @@ if __name__ == '__main__':
         train_loss = calculate_loss(model, train_loader, optimizer=optimizer)
         valid_loss = calculate_loss(model, valid_loader)
 
-        print(f'EPOCH: [{epoch}/{args.n_epochs}], train_loss: {train_loss:.3f}, valid_loss: {valid_loss:.3f}')
+        print(f'EPOCH: [{epoch}/{args.n_epochs}], TRAIN_LOSS: {train_loss:.3f}, VALID_LOSS: {valid_loss:.3f}')
 
-        #if valid_loss < best_loss:
+        # if valid_loss < best_loss:
         weights_name = args.weight_dir + args.experiment_name + f'_{valid_loss:.5f}' + '.pth'
         best_loss = valid_loss
         best_param = model.state_dict()

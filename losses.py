@@ -6,44 +6,28 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-"""
-class TripletLoss(nn.Module):
-    def __init__(self, margin=0.2):
-        super(TripletLoss, self).__init__()
-        self.margin = margin
-
-    def forward(self, anchor, positive, negative):
-        dist = torch.sum(
-            torch.pow((anchor - positive), 2) - torch.pow((anchor - negative), 2),
-            dim=1) + self.margin
-        return F.relu(dist).mean()
-"""
-
-
 class TripletLoss(nn.Module):
     def __init__(self, margin=0.2):
         super(TripletLoss, self).__init__()
         self.margin = margin
 
     def forward(self, a, p, n):
-        loss = (a - p).pow(2).sum(1) - (a - n).pow(2).sum(1) + self.margin
+        loss = torch.norm(a - p, p=2, dim=1) - torch.norm(a - n, p=2, dim=1) + self.margin
         return F.relu(loss).mean()
 
 
-
 class TripletAngularLoss(nn.Module):
-    def __init__(self, alpha=45, in_degree=True):
-        # y=dnn(x), must be L2 Normalized.
+    def __init__(self, alpha=45, in_degree=True, margin=5.0):
         super(TripletAngularLoss, self).__init__()
+        self.margin = margin
         if in_degree:
             alpha = np.deg2rad(alpha)
         self.tan_alpha = np.tan(alpha) ** 2
 
     def forward(self, a, p, n):
         c = (a + p) / 2
-        loss = F.relu(F.normalize(a - p).pow(2) - 4 * self.tan_alpha * F.normalize(n - c).pow(2))
-        return loss.sum()
-
+        loss = torch.norm(a - p, p=2, dim=1) - 4*self.tan_alpha*torch.norm(n - c, p=2, dim=1) + self.margin
+        return F.relu(loss).mean()
 
 class FocalLoss(nn.Module):
     def __init__(self, gamma=2, alpha=None, size_average=True):

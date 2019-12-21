@@ -44,21 +44,8 @@ if __name__ == '__main__':
     pred_metric = np.concatenate(pred_metric, 0)
     y_test = np.concatenate(y_test, 0)
 
-    Y_reduced = TSNE(n_components=2, random_state=0).fit_transform(pred_metric)
-    plt.scatter(Y_reduced[:, 0], Y_reduced[:, 1], c=y_test)
+    y_reduced = TSNE(n_components=2, random_state=0).fit_transform(pred_metric)
+    plt.scatter(y_reduced[:, 0], y_reduced[:, 1], c=y_test)
     plt.colorbar()
     plt.savefig(args.experiment_name + '_tSNE.png')
     plt.show()
-
-    X_train, X_valid, y_train, y_valid = train_test_split(pred_metric, y_test, test_size=0.5, shuffle=True, random_state=27)
-    knn = KMeans(args.n_classes)
-    knn.fit(X_train)
-    pred = knn.predict(X_valid)
-
-    acc = accuracy_score(pred, y_valid)
-    f1 = f1_score(pred, y_valid)
-    conf_mat = confusion_matrix(pred, y_valid)
-    print(f'ACCURACY: {acc}')
-    print(f'F1 SCORE: {f1}')
-    print('confusion matrix')
-    print(conf_mat)
